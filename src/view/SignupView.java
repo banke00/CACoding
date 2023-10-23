@@ -1,8 +1,10 @@
 package view;
 
+import interface_adapter.clear_users.ClearController;
 import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupState;
 import interface_adapter.signup.SignupViewModel;
+import use_case.clear_users.ClearInputBoundary;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,6 +14,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 
 public class SignupView extends JPanel implements ActionListener, PropertyChangeListener {
     public final String viewName = "sign up";
@@ -50,10 +53,12 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
         cancel = new JButton(SignupViewModel.CANCEL_BUTTON_LABEL);
         buttons.add(cancel);
 
+
         // TODO Note: the following line instantiates the "clear" button; it uses
         //      a CLEAR_BUTTON_LABEL constant which is defined in the SignupViewModel class.
         //      You need to add this "clear" button to the "buttons" panel.
         clear = new JButton(SignupViewModel.CLEAR_BUTTON_LABEL);
+        buttons.add(clear); // I added this line
 
         signUp.addActionListener(
                 // This creates an anonymous subclass of ActionListener and instantiates it.
@@ -79,10 +84,21 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
                 new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
+                        ClearController clearController = new ClearController();
+                        ArrayList<String> clearedUsernames = clearController.clearUsers();
 
+                        if (!clearedUsernames.isEmpty()) {
+                            String message = String.join(", ", clearedUsernames);
+                            JOptionPane.showMessageDialog(SignupView.this, message);
+                        } else {
+                            JOptionPane.showMessageDialog(SignupView.this, "No users");
+                        }
                     }
                 }
         );
+
+
+
 
         cancel.addActionListener(this);
 
